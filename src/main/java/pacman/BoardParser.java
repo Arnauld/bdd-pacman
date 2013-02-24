@@ -14,7 +14,16 @@ public class BoardParser {
     public static final char HZ = '─';
     public static final char ALONE = '▢';
     public static final char WALL = '#';
+    //
     public static final char FOOD = '.';
+    //
+    public static final char PACGUM = 'o';
+    //
+    public static final char PACMAN = '<';
+    public static final char BLINKY = 'B'; // Shadow / Red
+    public static final char PINKY = 'P';  // Pink / Speedy
+    public static final char INKY = 'I'; // Bashful / Cyan
+    public static final char CLYDE = 'C'; // Pokey / Orange
 
     public Board parse(String boardAsString) {
         String[] rows = boardAsString.split("[\r\n]+");
@@ -30,7 +39,6 @@ public class BoardParser {
             }
         }
 
-
         Board board = new Board(nbCols, nbRows);
         for (int r=0; r<rows.length; r++) {
             String row = rows[r];
@@ -40,13 +48,50 @@ public class BoardParser {
                     board.markAsWall(c+1, r+1);
                 if(isFood(v))
                     board.markWithFood(c + 1, r + 1);
+                if(isPacGum(v))
+                    board.markWithPacGum(c + 1, r + 1);
+                if(isProtagonist(v))
+                    board.placeProtagonist(c + 1, r + 1, getProtagonist(v));
             }
         }
 
         return board;
     }
 
-    public static boolean isFood(char v) {
+    public Protagonist getProtagonist(char c) {
+        switch (c) {
+            case BLINKY:
+                return Protagonist.Blinky;
+            case PINKY:
+                return Protagonist.Pinky;
+            case INKY:
+                return Protagonist.Inky;
+            case CLYDE:
+                return Protagonist.Clyde;
+            case PACMAN:
+                return Protagonist.Pacman;
+
+        }
+        throw new IllegalArgumentException("Not a valid protagonist: '" + c + "'");
+    }
+
+    public boolean isProtagonist(char c) {
+        switch (c) {
+            case BLINKY:
+            case PINKY:
+            case INKY:
+            case CLYDE:
+            case PACMAN:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isPacGum(char c) {
+        return c == PACGUM;
+    }
+
+    public boolean isFood(char v) {
         return v == FOOD;
     }
 

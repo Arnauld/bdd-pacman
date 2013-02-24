@@ -1,5 +1,7 @@
 package pacman;
 
+import java.math.BigDecimal;
+
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -47,9 +49,27 @@ public class Board {
         cellAt(col, row).markWithFood();
     }
 
+    public void markWithPacGum(int col, int row) {
+        cellAt(col, row).markWithPacGum();
+    }
+
+    public void placeProtagonist(int col, int row, Protagonist protagonist) {
+        cellAt(col, row).placeProtagonist(protagonist);
+    }
+
+    public Protagonist getProgonist(int col, int row) {
+        return cellAt(col, row).getProtagonist();
+    }
+
+    public boolean hasPacGum(int col, int row) {
+        return cellAt(col, row).hasPacGum();
+    }
+
     public static class Cell {
         private boolean wall;
         private boolean hasFood;
+        private boolean hasPacGum;
+        private Protagonist protagonist;
 
         public void markAsWall() {
             this.wall = true;
@@ -65,6 +85,22 @@ public class Board {
 
         public boolean hasFood() {
             return hasFood;
+        }
+
+        public void markWithPacGum() {
+            this.hasPacGum = true;
+        }
+
+        public boolean hasPacGum() {
+            return hasPacGum;
+        }
+
+        public void placeProtagonist(Protagonist protagonist) {
+            this.protagonist = protagonist;
+        }
+
+        public Protagonist getProtagonist() {
+            return protagonist;
         }
     }
 }
