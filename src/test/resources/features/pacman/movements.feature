@@ -3,7 +3,7 @@ Feature: Be able to move a protagonist on the board
   Scenario: A simple move
 
     Given the following working board
-    #1234567890123456789
+   #1234567890123456789
     """
        #################
     ####...............#
