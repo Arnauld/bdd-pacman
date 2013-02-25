@@ -7,11 +7,11 @@ import cucumber.api.java.en.But;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import cucumber.runtime.PendingException;
 import pacman.Board;
 import pacman.BoardBeautifier;
 import pacman.BoardParser;
 import pacman.BricABrac;
+import pacman.Direction;
 import pacman.Protagonist;
 
 /**
@@ -92,10 +92,22 @@ public class PacmanSteps {
                 "Cell at (col: " + col + ", row: " + row + ") must be a pacgum").isTrue();
     }
 
-    @Then("^([a-zA-Z]+) is located at column (\\d+) and row (\\d+)$")
-    public void Pacman_is_located_at_column_and_row(Protagonist protagonist, int col, int row) throws Throwable {
+    @Then("^([a-zA-Z]+) is(?: still)? located at column (\\d+) and row (\\d+)$")
+    public void protagonist_is_located_at_column_and_row(Protagonist protagonist, int col, int row) throws Throwable {
         assertThat(board).isNotNull();
-        assertThat(board.getProgonist(col, row)).as(
+        assertThat(board.getProgonistAt(col, row)).as(
                 "Cell at (col: " + col + ", row: " + row + ") must be " + protagonist).isEqualTo(protagonist);
+    }
+
+    @Given("^the following working board$")
+    public void the_following_working_board(String boardAsString) throws Throwable {
+        this.boardAsString = BricABrac.stripMargin(boardAsString);
+        this.board = new BoardParser().parse(boardAsString);
+    }
+
+    @When("^([a-zA-Z]+) moves ([a-zA-Z]+)$")
+    public void protagonist_move_(Protagonist protagonist, Direction direction) throws Throwable {
+        assertThat(board).isNotNull();
+        board.move(protagonist, direction);
     }
 }

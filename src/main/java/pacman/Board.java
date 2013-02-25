@@ -1,7 +1,5 @@
 package pacman;
 
-import java.math.BigDecimal;
-
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -57,12 +55,37 @@ public class Board {
         cellAt(col, row).placeProtagonist(protagonist);
     }
 
-    public Protagonist getProgonist(int col, int row) {
+    public Protagonist getProgonistAt(int col, int row) {
         return cellAt(col, row).getProtagonist();
     }
 
     public boolean hasPacGum(int col, int row) {
         return cellAt(col, row).hasPacGum();
+    }
+
+    public void move(Protagonist protagonist, Direction direction) {
+        Coord coord = lookupCoordOf(protagonist);
+        if(coord == null) {
+            throw new IllegalStateException("Protagonist '" + protagonist + "' not found");
+        }
+        Coord nextCoord = coord.apply(direction);
+        Cell nextCell = cellAt(nextCoord.col, nextCoord.row);
+        if(nextCell.isWall())
+            return;
+
+        nextCell.placeProtagonist(protagonist);
+        Cell cell = cellAt(coord.col, coord.row);
+        cell.placeProtagonist(null);
+    }
+
+    private Coord lookupCoordOf(Protagonist protagonist) {
+        for(int col=1; col<=nbCols; col++) {
+            for(int row=1; row <= nbRows; row++) {
+                if(cellAt(col, row).getProtagonist() == protagonist)
+                    return new Coord(col, row);
+            }
+        }
+        return null;
     }
 
     public static class Cell {
