@@ -3,7 +3,7 @@ Feature: Be able to read a board from text
   Scenario: An empty board with food
 
     Given the following board
-   #01234567890123456789
+   #1234567890123456789
     """
     ####################
     #..................#
