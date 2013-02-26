@@ -62,7 +62,7 @@
 => OK
 
 `stripMargin_multilines_trailing_whitespaces`
-`        assertThat(BricABrac.stripMargin("    |ehoh\n    |yuk")).isEqualTo("ehoh");`
+`        assertThat(BricABrac.stripMargin("    |ehoh\n    |yuk")).isEqualTo("ehoh");
 => Failure
 
 .. return input.replaceAll("(^|([\r\n]))\\s*\\|", "$2");
@@ -494,6 +494,50 @@ Warning: index starts at 0, but col and row start at 1 :)
 
 => OK; TU 
 => Feature: OK too
+
+# Part 3: Step aside - Protagonist refactor
+
+    public void move(Protagonist protagonist, Direction direction) {
+        Coord coord = lookupCoordOf(protagonist);
+
+Method `lookupCoordOf` is very inefficient...
+
+Create a dedicated class per creature that will handle their status, coordinate, etc...
+
+    public class Creature {
+        private Protagonist protagonist;
+    }
+
+=> rename `Protagonist` to `CreatureType` 
+
+    private final CreatureType creatureType;
+    private Coord coord;
+    
+    public Creature(CreatureType creatureType) {
+        this.creatureType = creatureType;
+    }
+    
+    public void teleportTo(Coord coord) {
+        this.coord = coord;
+    }
+    
+    public Coord getCoord() {
+        return coord;
+    }
+
+
+`Coord` being a Vale Object, it can be referenced without being worried about external change.
+
+
+...
+
+benefits & warnings:
+
+* `public Creature getCreatureAt(int col, int row) {` returns only one creature, our approach allow more than one creature to be located at the same cell
+* Faster lookup for creature coord
+
+
+
 
 
 

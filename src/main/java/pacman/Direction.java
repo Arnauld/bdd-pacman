@@ -8,8 +8,4 @@ public enum Direction {
     DOWN,
     LEFT,
     RIGHT;
-
-    public Coord apply(Coord coord) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
 }

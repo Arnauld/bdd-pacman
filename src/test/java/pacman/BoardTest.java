@@ -19,32 +19,35 @@ public class BoardTest {
 
     @Test
     public void place_protagonist() {
-        board.placeProtagonist(2, 2, Protagonist.Pacman);
-        assertThat(board.getProgonistAt(2, 2)).isEqualTo(Protagonist.Pacman);
+        board.placeProtagonist(2, 2, CreatureType.Pacman);
+        assertThat(board.getCreatureAt(2, 2)).isNotNull();
+        assertThat(board.getCreatureAt(2, 2).getCreatureType()).isEqualTo(CreatureType.Pacman);
 
         for(int col=1; col<=board.getNbCols(); col++) {
             for(int row=1;row <=board.getNbRows(); row++) {
                 if(col!=2 && row!=2)
-                    assertThat(board.getProgonistAt(col, row)).isNull();
+                    assertThat(board.getCreatureAt(col, row)).isNull();
             }
         }
     }
 
     @Test
     public void move_protagonist_in_empty_cell() {
-        board.placeProtagonist(2, 2, Protagonist.Pacman);
-        board.move(Protagonist.Pacman, Direction.RIGHT);
-        assertThat(board.getProgonistAt(2, 2)).isNull();
-        assertThat(board.getProgonistAt(3, 2)).isEqualTo(Protagonist.Pacman);
+        board.placeProtagonist(2, 2, CreatureType.Pacman);
+        board.move(CreatureType.Pacman, Direction.RIGHT);
+        assertThat(board.getCreatureAt(2, 2)).isNull();
+        assertThat(board.getCreatureAt(3, 2)).isNotNull();
+        assertThat(board.getCreatureAt(3, 2).getCreatureType()).isEqualTo(CreatureType.Pacman);
     }
 
     @Test
     public void move_protagonist_in_a_wall() {
-        board.placeProtagonist(2, 2, Protagonist.Pacman);
+        board.placeProtagonist(2, 2, CreatureType.Pacman);
         board.markAsWall(3, 2);
-        board.move(Protagonist.Pacman, Direction.RIGHT);
-        assertThat(board.getProgonistAt(2, 2)).as("Protagonist should still be there").isEqualTo(Protagonist.Pacman);
-        assertThat(board.getProgonistAt(3, 2)).isNull();
+        board.move(CreatureType.Pacman, Direction.RIGHT);
+        assertThat(board.getCreatureAt(2, 2)).as("CreatureType should still be there").isNotNull();
+        assertThat(board.getCreatureAt(2, 2).getCreatureType()).isEqualTo(CreatureType.Pacman);
+        assertThat(board.getCreatureAt(3, 2)).isNull();
     }
 
 }

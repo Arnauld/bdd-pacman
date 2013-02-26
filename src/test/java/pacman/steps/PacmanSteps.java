@@ -12,7 +12,7 @@ import pacman.BoardBeautifier;
 import pacman.BoardParser;
 import pacman.BricABrac;
 import pacman.Direction;
-import pacman.Protagonist;
+import pacman.CreatureType;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
@@ -93,10 +93,11 @@ public class PacmanSteps {
     }
 
     @Then("^([a-zA-Z]+) is(?: still)? located at column (\\d+) and row (\\d+)$")
-    public void protagonist_is_located_at_column_and_row(Protagonist protagonist, int col, int row) throws Throwable {
+    public void protagonist_is_located_at_column_and_row(CreatureType creatureType, int col, int row) throws Throwable {
         assertThat(board).isNotNull();
-        assertThat(board.getProgonistAt(col, row)).as(
-                "Cell at (col: " + col + ", row: " + row + ") must be " + protagonist).isEqualTo(protagonist);
+        assertThat(board.getCreatureAt(col, row)).as(
+                "Cell at (col: " + col + ", row: " + row + ") must be " + creatureType).isNotNull();
+        assertThat(board.getCreatureAt(col, row).getCreatureType()).isEqualTo(creatureType);
     }
 
     @Given("^the following working board$")
@@ -106,8 +107,8 @@ public class PacmanSteps {
     }
 
     @When("^([a-zA-Z]+) moves ([a-zA-Z]+)$")
-    public void protagonist_move_(Protagonist protagonist, Direction direction) throws Throwable {
+    public void protagonist_move_(CreatureType creatureType, Direction direction) throws Throwable {
         assertThat(board).isNotNull();
-        board.move(protagonist, direction);
+        board.move(creatureType, direction);
     }
 }

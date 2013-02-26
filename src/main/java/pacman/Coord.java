@@ -25,4 +25,8 @@ public class Coord {
                 throw new IllegalArgumentException("Direction '" + direction + "'not supported");
         }
     }
+
+    public boolean sameAs(int col, int row) {
+        return this.col == col && this.row == row;
+    }
 }

@@ -3,7 +3,7 @@ package pacman;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public enum Protagonist {
+public enum CreatureType {
     Pacman,
     Blinky, // Shadow / Red
     Pinky, // Pink / Speedy

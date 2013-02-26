@@ -58,18 +58,18 @@ public class BoardParser {
         return board;
     }
 
-    public Protagonist getProtagonist(char c) {
+    public CreatureType getProtagonist(char c) {
         switch (c) {
             case BLINKY:
-                return Protagonist.Blinky;
+                return CreatureType.Blinky;
             case PINKY:
-                return Protagonist.Pinky;
+                return CreatureType.Pinky;
             case INKY:
-                return Protagonist.Inky;
+                return CreatureType.Inky;
             case CLYDE:
-                return Protagonist.Clyde;
+                return CreatureType.Clyde;
             case PACMAN:
-                return Protagonist.Pacman;
+                return CreatureType.Pacman;
 
         }
         throw new IllegalArgumentException("Not a valid protagonist: '" + c + "'");

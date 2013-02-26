@@ -1,5 +1,8 @@
 package pacman;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -7,6 +10,7 @@ public class Board {
     private final int nbCols;
     private final int nbRows;
     private final Cell[][] cells;
+    private Map<CreatureType, Creature> creatures;
 
     public Board(int nbCols, int nbRows) {
         this.nbCols = nbCols;
@@ -17,6 +21,7 @@ public class Board {
                 cells[col][row] = new Cell();
             }
         }
+        this.creatures = new HashMap<CreatureType, Creature>();
     }
 
     public int getNbCols() {
@@ -51,48 +56,49 @@ public class Board {
         cellAt(col, row).markWithPacGum();
     }
 
-    public void placeProtagonist(int col, int row, Protagonist protagonist) {
-        cellAt(col, row).placeProtagonist(protagonist);
+    public void placeProtagonist(int col, int row, CreatureType creatureType) {
+        creature(creatureType).teleportTo(new Coord(col, row));
     }
 
-    public Protagonist getProgonistAt(int col, int row) {
-        return cellAt(col, row).getProtagonist();
+    private Creature creature(CreatureType creatureType) {
+        Creature creature = creatures.get(creatureType);
+        if(creature == null) {
+            creature = new Creature(creatureType);
+            creatures.put(creatureType, creature);
+        }
+        return creature;
+    }
+
+    public Creature getCreatureAt(int col, int row) {
+        for(Creature creature : creatures.values()) {
+            if(creature.isLocatedAt(col, row))
+                return creature;
+        }
+        return null;
     }
 
     public boolean hasPacGum(int col, int row) {
         return cellAt(col, row).hasPacGum();
     }
 
-    public void move(Protagonist protagonist, Direction direction) {
-        Coord coord = lookupCoordOf(protagonist);
+    public void move(CreatureType creatureType, Direction direction) {
+        Creature creature = creature(creatureType);
+
+        Coord coord = creature.getCoord();
         if(coord == null) {
-            throw new IllegalStateException("Protagonist '" + protagonist + "' not found");
+            throw new IllegalStateException("CreatureType '" + creatureType + "' not placed!");
         }
         Coord nextCoord = coord.apply(direction);
         Cell nextCell = cellAt(nextCoord.col, nextCoord.row);
         if(nextCell.isWall())
             return;
-
-        nextCell.placeProtagonist(protagonist);
-        Cell cell = cellAt(coord.col, coord.row);
-        cell.placeProtagonist(null);
-    }
-
-    private Coord lookupCoordOf(Protagonist protagonist) {
-        for(int col=1; col<=nbCols; col++) {
-            for(int row=1; row <= nbRows; row++) {
-                if(cellAt(col, row).getProtagonist() == protagonist)
-                    return new Coord(col, row);
-            }
-        }
-        return null;
+        creature.moveTo(nextCoord);
     }
 
     public static class Cell {
         private boolean wall;
         private boolean hasFood;
         private boolean hasPacGum;
-        private Protagonist protagonist;
 
         public void markAsWall() {
             this.wall = true;
@@ -116,14 +122,6 @@ public class Board {
 
         public boolean hasPacGum() {
             return hasPacGum;
-        }
-
-        public void placeProtagonist(Protagonist protagonist) {
-            this.protagonist = protagonist;
-        }
-
-        public Protagonist getProtagonist() {
-            return protagonist;
         }
     }
 }
