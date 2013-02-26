@@ -50,8 +50,15 @@ public class BoardParser {
                     board.markWithFood(c + 1, r + 1);
                 if(isPacGum(v))
                     board.markWithPacGum(c + 1, r + 1);
-                if(isProtagonist(v))
-                    board.placeProtagonist(c + 1, r + 1, getProtagonist(v));
+                if(isProtagonist(v)) {
+                    CreatureType protagonist = getProtagonist(v);
+                    if(board.isCreaturePresent(protagonist)) {
+                        throw new BoardParseException("Duplicate protagonist " + protagonist);
+                    }
+                    else {
+                        board.placeProtagonist(c + 1, r + 1, protagonist);
+                    }
+                }
             }
         }
 

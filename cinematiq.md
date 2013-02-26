@@ -537,6 +537,11 @@ benefits & warnings:
 * Faster lookup for creature coord
 
 
+    commit 3cdba2efdbedca1c85eb3827baac1a8c1b3bff96
+    Author: Arnauld Loyer <arnauld.loyer@gmail.com>
+    Date:   Tue Feb 26 22:01:25 2013 +0100
+    
+        Refactor Protagonist enum to Creature and CreatureType + fix tests
 
 
 

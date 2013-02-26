@@ -60,6 +60,10 @@ public class Board {
         creature(creatureType).teleportTo(new Coord(col, row));
     }
 
+    public boolean isCreaturePresent(CreatureType creatureType) {
+        return creatures.containsKey(creatureType);
+    }
+
     private Creature creature(CreatureType creatureType) {
         Creature creature = creatures.get(creatureType);
         if(creature == null) {

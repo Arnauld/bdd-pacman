@@ -7,6 +7,7 @@ import cucumber.api.java.en.But;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import cucumber.runtime.PendingException;
 import pacman.Board;
 import pacman.BoardBeautifier;
 import pacman.BoardParser;
@@ -22,6 +23,7 @@ public class PacmanSteps {
     private Board board;
     private String boardAsString;
     private String computedBoardAsString;
+    private Exception loadException;
 
     @Given("^the following board$")
     public void the_following_board(String boardAsString) throws Throwable {
@@ -31,8 +33,20 @@ public class PacmanSteps {
     @When("^one loads it$")
     public void one_loads_it() throws Throwable {
         assertThat(boardAsString).describedAs("Invalid state: no board actually defined").isNotNull();
-        board = new BoardParser().parse(boardAsString);
+        try {
+            board = new BoardParser().parse(boardAsString);
+        }
+        catch (Exception e) {
+            loadException = e;
+        }
     }
+
+    @Then("^an error should occurs because of \\\"([^\\\"]*)\\\"$")
+    public void an_error_should_occurs_because_of(String message) throws Throwable {
+        assertThat(loadException).as("An error should have been raised").isNotNull();
+        assertThat(loadException.getMessage()).contains(message);
+    }
+
 
     @Then("^the board size must be (\\d+)x(\\d+)$")
     public void the_board_size_must_be_x(int nbCols, int nbRows) throws Throwable {
@@ -111,4 +125,5 @@ public class PacmanSteps {
         assertThat(board).isNotNull();
         board.move(creatureType, direction);
     }
+
 }

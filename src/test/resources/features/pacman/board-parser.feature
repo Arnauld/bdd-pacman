@@ -58,3 +58,18 @@ Feature: Be able to read a board from text
     And Pinky is located at column 16 and row 2
     And Clyde is located at column 17 and row 3
 
+
+  Scenario: A protagonist cannot appear twice on the board
+
+    Given the following board
+    #1234567890123456789
+    """
+       #################
+       #...........<...#
+    ####..<............#
+    #..................#
+    ####################
+    """
+    When one loads it
+    Then an error should occurs because of "Duplicate protagonist"
+
