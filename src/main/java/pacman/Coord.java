@@ -29,4 +29,33 @@ public class Coord {
     public boolean sameAs(int col, int row) {
         return this.col == col && this.row == row;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Coord coord = (Coord) o;
+
+        return sameAs(coord.col, coord.row);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = col;
+        result = 31 * result + row;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Coord{" +
+                "col=" + col +
+                ", row=" + row +
+                '}';
+    }
 }

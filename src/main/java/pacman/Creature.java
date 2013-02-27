@@ -6,6 +6,7 @@ package pacman;
 public class Creature {
     private final CreatureType creatureType;
     private Coord coord;
+    private CreatureState state;
 
     public Creature(CreatureType creatureType) {
         this.creatureType = creatureType;
@@ -27,7 +28,27 @@ public class Creature {
         return coord.sameAs(col, row);
     }
 
+    public boolean isLocatedAt(Coord coord) {
+        return isLocatedAt(coord.col, coord.row);
+    }
+
     public void moveTo(Coord nextCoord) {
         this.coord = nextCoord;
+    }
+
+    public void eatAPacGum() {
+        state = CreatureState.Pacgum;
+    }
+
+    public boolean isUnderPacGum() {
+        return state == CreatureState.Pacgum;
+    }
+
+    public void die() {
+        state = CreatureState.Dead;
+    }
+
+    public boolean isDead() {
+        return state == CreatureState.Dead;
     }
 }

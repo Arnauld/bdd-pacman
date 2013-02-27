@@ -1,6 +1,8 @@
 package pacman;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,14 +59,18 @@ public class Board {
     }
 
     public void placeProtagonist(int col, int row, CreatureType creatureType) {
-        creature(creatureType).teleportTo(new Coord(col, row));
+        getOrCreate(creatureType).teleportTo(new Coord(col, row));
+    }
+
+    public Creature getCreature(CreatureType creatureType) {
+        return creatures.get(creatureType);
     }
 
     public boolean isCreaturePresent(CreatureType creatureType) {
         return creatures.containsKey(creatureType);
     }
 
-    private Creature creature(CreatureType creatureType) {
+    private Creature getOrCreate(CreatureType creatureType) {
         Creature creature = creatures.get(creatureType);
         if(creature == null) {
             creature = new Creature(creatureType);
@@ -86,7 +92,7 @@ public class Board {
     }
 
     public void move(CreatureType creatureType, Direction direction) {
-        Creature creature = creature(creatureType);
+        Creature creature = getOrCreate(creatureType);
 
         Coord coord = creature.getCoord();
         if(coord == null) {
@@ -96,7 +102,38 @@ public class Board {
         Cell nextCell = cellAt(nextCoord.col, nextCoord.row);
         if(nextCell.isWall())
             return;
+
         creature.moveTo(nextCoord);
+        resolveSituationAt(nextCoord);
+    }
+
+    private void resolveSituationAt(Coord coord) {
+        List<Creature> ghosts = new ArrayList<Creature>();
+        Creature pacman = null;
+
+        for(Creature creature:creatures.values()) {
+            if(creature.isLocatedAt(coord) && !creature.isDead()) {
+                if(creature.getCreatureType() == CreatureType.Pacman)
+                    pacman = creature;
+                else
+                    ghosts.add(creature);
+            }
+        }
+
+        if(pacman!=null && !ghosts.isEmpty()) {
+            if(pacman.isUnderPacGum()) {
+                for(Creature ghost : ghosts)
+                    ghost.die();
+            }
+            else {
+                pacman.die();
+            }
+        }
+    }
+
+    public void pacmanEatsAPacgum() {
+        Creature pacman = getCreature(CreatureType.Pacman);
+        pacman.eatAPacGum();
     }
 
     public static class Cell {
