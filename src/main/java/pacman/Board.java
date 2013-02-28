@@ -1,6 +1,5 @@
 package pacman;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +14,7 @@ public class Board {
     private final Cell[][] cells;
     private Map<CreatureType, Creature> creatures;
     private int score;
+    private boolean timeFrozen;
 
     public Board(int nbCols, int nbRows) {
         this.nbCols = nbCols;
@@ -41,7 +41,7 @@ public class Board {
     }
 
     private Cell cellAt(int col, int row) {
-        return cells[col-1][row-1];
+        return cells[col - 1][row - 1];
     }
 
     public boolean isWall(int col, int row) {
@@ -74,7 +74,7 @@ public class Board {
 
     private Creature getOrCreate(CreatureType creatureType) {
         Creature creature = creatures.get(creatureType);
-        if(creature == null) {
+        if (creature == null) {
             creature = new Creature(creatureType);
             creatures.put(creatureType, creature);
         }
@@ -82,9 +82,10 @@ public class Board {
     }
 
     public Creature getCreatureAt(int col, int row) {
-        for(Creature creature : creatures.values()) {
-            if(creature.isLocatedAt(col, row))
+        for (Creature creature : creatures.values()) {
+            if (creature.isLocatedAt(col, row)) {
                 return creature;
+            }
         }
         return null;
     }
@@ -97,24 +98,30 @@ public class Board {
         Creature creature = getOrCreate(creatureType);
 
         Coord coord = creature.getCoord();
-        if(coord == null) {
+        if (coord == null) {
             throw new IllegalStateException("CreatureType '" + creatureType + "' not placed!");
         }
         Coord nextCoord = coord.apply(direction);
         Cell nextCell = cellAt(nextCoord.col, nextCoord.row);
-        if(nextCell.isWall())
+        if (nextCell.isWall()) {
             return;
+        }
 
-        creature.moveTo(nextCoord);
-        resolveSituationAt(nextCoord);
-        if(creatureType == CreatureType.Pacman) {
-            if(nextCell.hasFood()) {
-                score++;
-                nextCell.consumeFood();
-            }
-            if(nextCell.hasPacGum()) {
-                score++;
-                nextCell.consumePacGum();
+        if (timeFrozen) {
+            creature.changeDirection(direction);
+        }
+        else {
+            creature.teleportTo(nextCoord);
+            resolveSituationAt(nextCoord);
+            if (creatureType == CreatureType.Pacman) {
+                if (nextCell.hasFood()) {
+                    score++;
+                    nextCell.consumeFood();
+                }
+                if (nextCell.hasPacGum()) {
+                    score++;
+                    nextCell.consumePacGum();
+                }
             }
         }
     }
@@ -123,19 +130,22 @@ public class Board {
         List<Creature> ghosts = new ArrayList<Creature>();
         Creature pacman = null;
 
-        for(Creature creature:creatures.values()) {
-            if(creature.isLocatedAt(coord) && !creature.isDead()) {
-                if(creature.getCreatureType() == CreatureType.Pacman)
+        for (Creature creature : creatures.values()) {
+            if (creature.isLocatedAt(coord) && !creature.isDead()) {
+                if (creature.getCreatureType() == CreatureType.Pacman) {
                     pacman = creature;
-                else
+                }
+                else {
                     ghosts.add(creature);
+                }
             }
         }
 
-        if(pacman!=null && !ghosts.isEmpty()) {
-            if(pacman.isUnderPacGum()) {
-                for(Creature ghost : ghosts)
+        if (pacman != null && !ghosts.isEmpty()) {
+            if (pacman.isUnderPacGum()) {
+                for (Creature ghost : ghosts) {
                     ghost.die();
+                }
             }
             else {
                 pacman.die();
@@ -150,6 +160,28 @@ public class Board {
 
     public int getScore() {
         return score;
+    }
+
+    public void freezeTime() {
+        this.timeFrozen = true;
+    }
+
+    public void tick(int nbTicks) {
+        for (int i = 0; i < nbTicks; i++) {
+            tick();
+        }
+    }
+
+    private void tick() {
+        // first update all creatures
+        for (Creature creature : creatures.values()) {
+            creature.tick();
+        }
+
+        // then resolves all situations
+        for (Creature creature : creatures.values()) {
+            resolveSituationAt(creature.getCoord());
+        }
     }
 
     public static class Cell {

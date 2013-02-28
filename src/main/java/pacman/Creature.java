@@ -7,6 +7,10 @@ public class Creature {
     private final CreatureType creatureType;
     private Coord coord;
     private CreatureState state;
+    //
+    private int speed = 1;
+    private Direction direction, nextDirection;
+    private float alpha = 0.0f;
 
     public Creature(CreatureType creatureType) {
         this.creatureType = creatureType;
@@ -32,8 +36,11 @@ public class Creature {
         return isLocatedAt(coord.col, coord.row);
     }
 
-    public void moveTo(Coord nextCoord) {
-        this.coord = nextCoord;
+    public void changeDirection(Direction direction) {
+        if(this.direction == null)
+            this.direction = direction;
+        else
+            this.nextDirection = direction;
     }
 
     public void eatAPacGum() {
@@ -50,5 +57,38 @@ public class Creature {
 
     public boolean isDead() {
         return state == CreatureState.Dead;
+    }
+
+    public void changeSpeedTo(int speed) {
+        this.speed = speed;
+    }
+
+    public void tick() {
+        // ┘└ ┐┌ │─ □ ┬ ┤ ┴ ├ ┼
+        //
+        //   ┌─────────┬─────────┐
+        //   │    :    │    :    │
+        //   │    :    │    :    │
+        //   │....+....│....+....│
+        //   │    :    │    :    │
+        //   │    :    │    :    │
+        //   ├─────────┼─────────┤
+        //        <---> `speed/2` ticks
+
+        float before = alpha;
+        alpha += 2.0f / speed;
+
+        // changement de signe: on a passé 0
+        if(before*alpha < 0 || alpha==0.0) {
+            if(nextDirection != null) {
+                direction = nextDirection;
+                alpha = 0.0f;
+                nextDirection = null;
+            }
+        }
+        if(alpha >= 1.0) {
+            coord = coord.apply(direction);
+            alpha = -1.0f;
+        }
     }
 }

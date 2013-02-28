@@ -7,15 +7,14 @@ import cucumber.api.java.en.But;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import cucumber.runtime.PendingException;
 import pacman.Board;
 import pacman.BoardBeautifier;
 import pacman.BoardParser;
 import pacman.BricABrac;
 import pacman.Coord;
 import pacman.Creature;
-import pacman.Direction;
 import pacman.CreatureType;
+import pacman.Direction;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
@@ -127,7 +126,7 @@ public class PacmanSteps {
         board.move(creatureType, direction);
     }
 
-    @And("^([a-zA-Z]+) is dead$")
+    @Then("^([a-zA-Z]+) is dead$")
     public void protagonist_is_dead(CreatureType creatureType) throws Throwable {
         assertThat(board).isNotNull();
         Creature creature = board.getCreature(creatureType);
@@ -136,7 +135,7 @@ public class PacmanSteps {
 
     }
 
-    @And("^Pacman eat a Pacgum$")
+    @When("^Pacman eat a Pacgum$")
     public void Pacman_eat_a_Pacgum() throws Throwable {
         assertThat(board).isNotNull();
         board.pacmanEatsAPacgum();
@@ -152,5 +151,25 @@ public class PacmanSteps {
     public void the_cell_at_column_and_row_has_no_more_food(int col, int row) throws Throwable {
         assertThat(board).isNotNull();
         assertThat(board.hasFood(col, row)).isFalse();
+    }
+
+    @Given("^the time is frozen$")
+    public void the_time_is_frozen() throws Throwable {
+        assertThat(board).isNotNull();
+        board.freezeTime();
+    }
+
+    @Given("^([a-zA-Z]+) speed is (\\d+)$")
+    public void protagonist_speed_is(CreatureType creatureType, int speed) throws Throwable {
+        assertThat(board).isNotNull();
+        Creature creature = board.getCreature(creatureType);
+        assertThat(creature).isNotNull();
+        creature.changeSpeedTo(speed);
+    }
+
+    @When("^time ticks (\\d+) time[s]?$")
+    public void time_ticks_time(int nbTicks) throws Throwable {
+        assertThat(board).isNotNull();
+        board.tick(nbTicks);
     }
 }
