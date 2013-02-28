@@ -1,5 +1,6 @@
 package pacman;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ public class Board {
     private final int nbRows;
     private final Cell[][] cells;
     private Map<CreatureType, Creature> creatures;
+    private int score;
 
     public Board(int nbCols, int nbRows) {
         this.nbCols = nbCols;
@@ -105,6 +107,16 @@ public class Board {
 
         creature.moveTo(nextCoord);
         resolveSituationAt(nextCoord);
+        if(creatureType == CreatureType.Pacman) {
+            if(nextCell.hasFood()) {
+                score++;
+                nextCell.consumeFood();
+            }
+            if(nextCell.hasPacGum()) {
+                score++;
+                nextCell.consumePacGum();
+            }
+        }
     }
 
     private void resolveSituationAt(Coord coord) {
@@ -136,6 +148,10 @@ public class Board {
         pacman.eatAPacGum();
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public static class Cell {
         private boolean wall;
         private boolean hasFood;
@@ -164,5 +180,14 @@ public class Board {
         public boolean hasPacGum() {
             return hasPacGum;
         }
+
+        public void consumeFood() {
+            this.hasFood = false;
+        }
+
+        public void consumePacGum() {
+            this.hasPacGum = false;
+        }
+
     }
 }

@@ -29,6 +29,7 @@ Feature: Whenever a ghost and Pacman are in the same tile: only one can survive!
     Then Pinky is still located at column 5 and row 3
     And Pacman is dead
 
+
   Scenario: Pacman "under Pacgum" is the strongest!
 
     Given the following working board
@@ -43,5 +44,22 @@ Feature: Whenever a ghost and Pacman are in the same tile: only one can survive!
     When Pacman moves left
     Then Pacman is located at column 5 and row 3
     And Pinky is dead
+
+
+  Scenario: When Pacman goes to a tile with food, Pacman automatically eats it
+
+    Given the following working board
+   #1234567890123456789
+    """
+       #################
+    ####...............#
+    #...P<.............#
+    ####################
+    """
+    When Pacman moves right
+    Then Pacman is located at column 7 and row 3
+    And the score is equal to 1
+    And the cell at column 7 and row 3 has no more food
+
 
 

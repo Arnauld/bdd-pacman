@@ -138,6 +138,19 @@ public class PacmanSteps {
 
     @And("^Pacman eat a Pacgum$")
     public void Pacman_eat_a_Pacgum() throws Throwable {
+        assertThat(board).isNotNull();
         board.pacmanEatsAPacgum();
+    }
+
+    @And("^the score is equal to (\\d+)$")
+    public void the_score_is_equal_to(int score) throws Throwable {
+        assertThat(board).isNotNull();
+        assertThat(board.getScore()).isEqualTo(score);
+    }
+
+    @And("^the cell at column (\\d+) and row (\\d+) has no more food$")
+    public void the_cell_at_column_and_row_has_no_more_food(int col, int row) throws Throwable {
+        assertThat(board).isNotNull();
+        assertThat(board.hasFood(col, row)).isFalse();
     }
 }
