@@ -127,7 +127,7 @@ public class PacmanSteps {
         board.move(creatureType, direction);
     }
 
-    @And("^([a-zA-Z]+) is dead$")
+    @Then("^([a-zA-Z]+) is dead$")
     public void protagonist_is_dead(CreatureType creatureType) throws Throwable {
         assertThat(board).isNotNull();
         Creature creature = board.getCreature(creatureType);
@@ -136,8 +136,29 @@ public class PacmanSteps {
 
     }
 
-    @And("^Pacman eat a Pacgum$")
+    @When("^Pacman eat a Pacgum$")
     public void Pacman_eat_a_Pacgum() throws Throwable {
+        assertThat(board).isNotNull();
         board.pacmanEatsAPacgum();
+    }
+
+    @Given("^the time is frozen$")
+    public void the_time_is_frozen() throws Throwable {
+        assertThat(board).isNotNull();
+        board.freezeTime();
+    }
+
+    @Given("^([a-zA-Z]+) speed is (\\d+)$")
+    public void protagonist_speed_is(CreatureType creatureType, int speed) throws Throwable {
+        assertThat(board).isNotNull();
+        Creature creature = board.getCreature(creatureType);
+        assertThat(creature).isNotNull();
+        creature.changeSpeedTo(speed);
+    }
+
+    @When("^time ticks (\\d+) time[s]?$")
+    public void time_ticks_time(int nbTicks) throws Throwable {
+        assertThat(board).isNotNull();
+        board.tick(nbTicks);
     }
 }

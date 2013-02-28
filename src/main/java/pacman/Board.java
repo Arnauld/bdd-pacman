@@ -13,6 +13,7 @@ public class Board {
     private final int nbRows;
     private final Cell[][] cells;
     private Map<CreatureType, Creature> creatures;
+    private boolean timeFrozen;
 
     public Board(int nbCols, int nbRows) {
         this.nbCols = nbCols;
@@ -103,8 +104,13 @@ public class Board {
         if(nextCell.isWall())
             return;
 
-        creature.moveTo(nextCoord);
-        resolveSituationAt(nextCoord);
+        if(timeFrozen) {
+            creature.changeDirection(direction);
+        }
+        else {
+            creature.teleportTo(nextCoord);
+            resolveSituationAt(nextCoord);
+        }
     }
 
     private void resolveSituationAt(Coord coord) {
@@ -134,6 +140,27 @@ public class Board {
     public void pacmanEatsAPacgum() {
         Creature pacman = getCreature(CreatureType.Pacman);
         pacman.eatAPacGum();
+    }
+
+    public void freezeTime() {
+        this.timeFrozen = true;
+    }
+
+    public void tick(int nbTicks) {
+        for(int i=0; i<nbTicks; i++)
+            tick();
+    }
+
+    private void tick() {
+        // first update all creatures
+        for(Creature creature : creatures.values()) {
+            creature.tick();
+        }
+
+        // then resolves all situations
+        for(Creature creature : creatures.values()) {
+            resolveSituationAt(creature.getCoord());
+        }
     }
 
     public static class Cell {
